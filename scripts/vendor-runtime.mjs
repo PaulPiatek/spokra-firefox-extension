@@ -26,7 +26,8 @@ const files = [
   "simd.js",
   "index.d.ts",
   "LICENSE-MIT",
-  "LICENSE-APACHE"
+  "LICENSE-APACHE",
+  "THIRD_PARTY_LICENSES.md"
 ];
 const directories = ["wasm", "wasm-threads"];
 

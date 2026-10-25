@@ -18,7 +18,7 @@
     "vendor": "node scripts/vendor-runtime.mjs"
   },
   "devDependencies": {
-    "phonon-tts": "0.4.1",
+    "phonon-tts": "0.4.2",
     "web-ext": "10.8.0"
   }
 }

@@ -149,48 +149,31 @@
 - The extension is MIT: root `LICENSE` and `src/LICENSE` (the latter ships in the XPI).
 - The vendored runtime is MIT OR Apache-2.0; keep `src/vendor/phonon-tts/LICENSE-MIT` and
   `LICENSE-APACHE` inside the package. `npm run vendor` copies them.
-- The Rust crates linked into both wasm builds are in `THIRD_PARTY_RUST.md`, rendered from
-  `third-party/xn-ptts-<version>.json` by `scripts/rust-licenses.mjs`. Both are inputs, not build
-  output: the JSON is what a machine with Rust produces, the renderer only formats it, and
-  `npm test` fails when the two disagree. `npm run build` copies the markdown into `src/`.
+- The Rust crates linked into both wasm builds are covered by upstream's
+  `THIRD_PARTY_LICENSES.md`, which `phonon-tts` has shipped since 0.4.2. `npm run vendor` copies
+  it unchanged to `src/vendor/phonon-tts/`; this repository keeps no crate list or renderer of its
+  own. `npm test` checks the copy against the installed package and that every crate has a version
+  and a licence text.
 - The bundled `phonon-31m-en` weights, tokenizer and default voice are Apache-2.0 and ship in
   the XPI. The licence text is `src/vendor/phonon-tts/LICENSE-APACHE` and the attribution is
   `THIRD_PARTY_NOTICES.md`, copied in at build time. The 40m weights are CC BY-NC 4.0
   (non-commercial) and must not be bundled; the voice catalog is Apache-2.0.
 - Review the notices when the inputs change, not on a schedule:
-  - `phonon-tts` bump: re-read its `LICENSE-*` and README, then regenerate
-    `third-party/xn-ptts-<version>.json` and run `node scripts/rust-licenses.mjs` (see below).
-    Upstream still publishes no crate list of its own; that gap is tracked in
-    [xn-ptts#247](https://github.com/gradium-ai/xn-ptts/issues/247).
+  - `phonon-tts` bump: re-read its `LICENSE-*`, README and `THIRD_PARTY_LICENSES.md`; the crate
+    notices travel with the package, so `npm run vendor` is the only step.
   - checkpoint refresh or replacement: run `npm run check-model`, confirm the licence and update
     the repository and commit pin plus the Pocket TTS/Mimi attribution.
   - a new shipped asset under `src/`: record its origin and terms.
-  - before signing: `src/THIRD_PARTY_NOTICES.md` and `src/THIRD_PARTY_RUST.md` must match their
-    root files, and the pinned commit must be the one `models/` came from. `npm run build` copies
-    the notices; running `scripts/sign.mjs` alone signs whatever `src/` already holds.
+  - before signing: `src/THIRD_PARTY_NOTICES.md` must match the root file, and the pinned commit
+    must be the one `models/` came from. `npm run build` copies the notices; running
+    `scripts/sign.mjs` alone signs whatever `src/` already holds.
 
-### Regenerating the Rust notices
+### Rust notices
 
-`third-party/xn-ptts-<version>.json` is the only part written by hand, and it is mostly a
-transcript. It needs Rust, crates.io and the upstream tag, so it stays out of `npm run build`:
-
-1. Clone the tag the npm package was published from:
-   `git clone --depth 1 --branch v<version> https://github.com/gradium-ai/xn-ptts`.
-2. For each of `--features webgpu` and `--features threads,webgpu`, take two things for
-   `--target wasm32-unknown-unknown` from `ptts-wasm`: the `cargo tree -e normal` closure, and
-   `cargo about generate --format json`.
-3. Keep the crates in either closure, drop those whose only target is a proc macro, and take each
-   crate's licence text from the cargo-about output. The rest of the object is provenance: tag,
-   commit, `Cargo.lock` hash, npm integrity, tool version.
-4. `node scripts/rust-licenses.mjs`, then `npm test`.
-
-`cargo about`'s defaults are not the linked set: without `ignore-build-dependencies` and
-`ignore-dev-dependencies` it also lists the workspace's build and dev dependencies (`clap`,
-`anyhow`, `ptts-coreml`), which never reach the modules. The `cargo tree` closure is what is
-actually linked.
-
-Since 0.4.2 the package ships its own `THIRD_PARTY_LICENSES.md`, written by `make build` through
-`ptts-wasm/about.toml` (`Apache-2.0` first, `--fail` on anything unlisted) and declared in
-`js/package.json`'s `files`. It holds the same crates as ours plus the proc-macro ones. When the
-bundled version carries the file, prefer it: copy it in `vendor-runtime.mjs` and cut this pipeline
-down to a check, rather than shipping two lists.
+Upstream writes `THIRD_PARTY_LICENSES.md` in `make build` through `ptts-wasm/about.toml`
+(`Apache-2.0` first, `--fail` on anything unlisted) and declares it in `js/package.json`'s
+`files`; 0.4.2 was the first release to carry it. It lists 157 crates — the 146 linked ones plus
+the proc-macro crates — which is why it replaced this repository's cargo-about inventory,
+`third-party/xn-ptts-<version>.json` and `scripts/rust-licenses.mjs`. Both are in git history if a
+future package drops the file; that pipeline needed Rust, crates.io and the upstream tag, so it
+never ran inside `npm run build`.

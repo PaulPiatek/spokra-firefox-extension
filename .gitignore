@@ -6,7 +6,6 @@ src/.amo-upload-uuid
 
 # Copied into src/ by scripts/package-assets.mjs so they ship in the XPI.
 src/THIRD_PARTY_NOTICES.md
-src/THIRD_PARTY_RUST.md
 src/models/
 
 # Copied from node_modules by npm run vendor; package-lock.json pins the version.

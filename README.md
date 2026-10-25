@@ -224,10 +224,9 @@ and voices are not packaged.
 | `src/selection.js` | Reads the page selection block by block and closes each block as a sentence for the model. |
 | `src/settings.js` | Language, voice, device, temperature, imported model name. |
 | `src/options.*` | Settings UI, model import/delete, live status. |
-| `src/vendor/phonon-tts/` | [`phonon-tts`](https://www.npmjs.com/package/phonon-tts) 0.4.1, copied from `node_modules` by `npm run vendor` (generated, not tracked). Plain ES modules plus the wasm builds. |
+| `src/vendor/phonon-tts/` | [`phonon-tts`](https://www.npmjs.com/package/phonon-tts) 0.4.2, copied from `node_modules` by `npm run vendor` (generated, not tracked). Plain ES modules plus the wasm builds and the notices for the Rust crates linked into them. |
 | `scripts/fetch-model.mjs` | Downloads a checkpoint (and voices) from Hugging Face into `models/`. |
 | `scripts/package-assets.mjs` | Copies the notices and the bundled checkpoint into `src/` before `web-ext` packs it. |
-| `THIRD_PARTY_RUST.md` | The 146 Rust crates linked into the wasm builds, with licence texts; rendered from `third-party/xn-ptts-0.4.1.json` by `scripts/rust-licenses.mjs`. |
 
 An imported model lives in IndexedDB as `Blob`s, and so does the voice library. The background
 page reads them when the model loads and makes `blob:` URLs for the runtime, which only accepts
@@ -244,10 +243,10 @@ CPU thread by default, or on WebGPU when that is selected explicitly.
 ## Licence
 
 The extension is **MIT licensed** — see [LICENSE](LICENSE). The bundled runtime (`phonon-tts`, in
-`src/vendor/phonon-tts/`) is MIT OR Apache-2.0; its licence texts ship with it.
-[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) lists the third-party terms, and
-[THIRD_PARTY_RUST.md](THIRD_PARTY_RUST.md) lists the 146 Rust crates statically linked into the two
-WebAssembly builds, with the full text of each licence.
+`src/vendor/phonon-tts/`) is MIT OR Apache-2.0; its licence texts ship with it, together with
+upstream's `THIRD_PARTY_LICENSES.md`, which covers the Rust crates statically linked into the two
+WebAssembly builds.
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) lists the third-party terms.
 
 The bundled English `phonon-31m-en` checkpoint (weights, tokenizer and default voice) is
 **Apache-2.0**, so it ships in the package. The multilingual 40m weights are **CC BY-NC 4.0**
@@ -262,10 +261,9 @@ the bundled checkpoint.
 The notices are checked whenever what ships changes, not on a calendar:
 
 - **A new `phonon-tts` version** (`npm run vendor`): read the package's `LICENSE-*` files and its
-  README again, regenerate `third-party/xn-ptts-<version>.json` from the new `Cargo.lock`, and run
-  `node scripts/rust-licenses.mjs`; `npm test` fails while the notices and the inventory disagree.
-  Upstream now writes its own `THIRD_PARTY_LICENSES.md` into the package (xn-ptts#247); if the
-  version being bundled carries one, replace ours with it instead of regenerating.
+  README again. Since 0.4.2 the package ships upstream's `THIRD_PARTY_LICENSES.md`;
+  `npm run vendor` copies it unmodified into `src/vendor/phonon-tts/`, and `npm test` checks that
+  the copy matches the installed package and that no crate is left without a licence.
 - **A different or refreshed checkpoint** (`npm run fetch-model`, or replacing `models/` by
   hand): run `npm run check-model`, confirm the licence and update the repository and commit pin
   in `THIRD_PARTY_NOTICES.md`, including the Pocket TTS and Mimi attribution.
