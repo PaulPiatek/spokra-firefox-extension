@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Spokra",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "description": "Read selected text aloud with an on-device voice. No server, no API key.",
   "permissions": [
     "activeTab",

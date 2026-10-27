@@ -224,7 +224,7 @@ and voices are not packaged.
 | `src/selection.js` | Reads the page selection block by block and closes each block as a sentence for the model. |
 | `src/settings.js` | Language, voice, device, temperature, imported model name. |
 | `src/options.*` | Settings UI, model import/delete, live status. |
-| `src/vendor/phonon-tts/` | [`phonon-tts`](https://www.npmjs.com/package/phonon-tts) 0.4.2, copied from `node_modules` by `npm run vendor` (generated, not tracked). Plain ES modules plus the wasm builds and the notices for the Rust crates linked into them. |
+| `src/vendor/phonon-tts/` | [`phonon-tts`](https://www.npmjs.com/package/phonon-tts) 0.5.0, copied from `node_modules` by `npm run vendor` (generated, not tracked). Plain ES modules plus the wasm builds and the notices for the Rust crates linked into them. |
 | `scripts/fetch-model.mjs` | Downloads a checkpoint (and voices) from Hugging Face into `models/`. |
 | `scripts/package-assets.mjs` | Copies the notices and the bundled checkpoint into `src/` before `web-ext` packs it. |
 

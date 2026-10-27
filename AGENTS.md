@@ -172,8 +172,9 @@
 
 Upstream writes `THIRD_PARTY_LICENSES.md` in `make build` through `ptts-wasm/about.toml`
 (`Apache-2.0` first, `--fail` on anything unlisted) and declares it in `js/package.json`'s
-`files`; 0.4.2 was the first release to carry it. It lists 157 crates — the 146 linked ones plus
-the proc-macro crates — which is why it replaced this repository's cargo-about inventory,
+`files`; 0.4.2 was the first release to carry it. It lists the crates behind each licence — the
+linked ones plus the proc-macro crates, with their versions — which is why it replaced this
+repository's cargo-about inventory,
 `third-party/xn-ptts-<version>.json` and `scripts/rust-licenses.mjs`. Both are in git history if a
 future package drops the file; that pipeline needed Rust, crates.io and the upstream tag, so it
 never ran inside `npm run build`.
